@@ -1,0 +1,125 @@
+{
+  "name": "azuredevopspilot",
+  "displayName": "AzureDevOpsPilot",
+  "description": "A pilot for Azure DevOps",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:azureDevopsView",
+    "onCommand:azuredevopspilot.helloWorld"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "TypeScript",
+      "properties": {
+        "typescript.useCodeSnippetsOnMethodSuggest": {
+          "type": "boolean",
+          "default": false,
+          "description": "Complete functions with their parameter signature."
+        },
+        "typescript.tsdk": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specifies the folder path containing the tsserver and lib*.d.ts files to use."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "azureDevopsView",
+          "name": "Azure DevOps"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "azuredevopspilot.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/refresh-svgrepo-com.svg",
+          "dark": "resources/refresh-svgrepo-com.svg"
+        }
+      },
+      {
+        "command": "azuredevopspilot.openItem",
+        "title": "Open in browser"
+      },
+      {
+        "command": "azuredevopspilot.changeStateActive",
+        "title": "Start Work"
+      },
+      {
+        "command": "azuredevopspilot.changeStateResolved",
+        "title": "Set as Resolved"
+      },
+      {
+        "command": "azuredevopspilot.changeStateClosed",
+        "title": "Close"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "azuredevopspilot.refreshEntry",
+          "when": "view == azureDevopsView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "azuredevopspilot.openItem",
+          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug"
+        },
+        {
+          "command": "azuredevopspilot.changeStateActive",
+          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug",
+          "group": "state@1"
+        },
+        {
+          "command": "azuredevopspilot.changeStateResolved",
+          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug",
+          "group": "state@2"
+        },
+        {
+          "command": "azuredevopspilot.changeStateClosed",
+          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug",
+          "group": "state@3"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.73.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "@vscode/test-electron": "^2.2.0",
+    "eslint": "^8.26.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "azure-devops-node-api": "^11.2.0"
+  }
+}
