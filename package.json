@@ -10,38 +10,41 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:azureDevopsView",
+    "onView:azureDevOpsSprintView",
     "onCommand:azuredevopspilot.helloWorld"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "TypeScript",
+      "title": "Azure DevOps",
       "properties": {
-        "typescript.useCodeSnippetsOnMethodSuggest": {
-          "type": "boolean",
-          "default": false,
-          "description": "Complete functions with their parameter signature."
+        "azureDevopsPilot.organizationName": {
+          "type": "string",
+          "default": "<Azure DevOps Organization>",
+          "description": "Enter a valid DevOps organization.",
+          "scope": "application"
         },
-        "typescript.tsdk": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Specifies the folder path containing the tsserver and lib*.d.ts files to use."
+        "azureDevopsPilot.allowEdit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Change Work Item state.",
+          "scope": "application"
         }
       }
     },
     "views": {
       "explorer": [
         {
-          "id": "azureDevopsView",
-          "name": "Azure DevOps"
+          "id": "azureDevOpsSprintView",
+          "name": "Azure DevOps Sprint"
         }
       ]
     },
     "commands": [
+      {
+        "command": "azuredevopspilot.setDevOpsPAT",
+        "title": "Configure Azure DevOps PAT"
+      },
       {
         "command": "azuredevopspilot.refreshEntry",
         "title": "Refresh",
@@ -71,32 +74,38 @@
       "view/title": [
         {
           "command": "azuredevopspilot.refreshEntry",
-          "when": "view == azureDevopsView",
+          "when": "view == azureDevOpsSprintView",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "azuredevopspilot.openItem",
-          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug"
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug"
         },
         {
           "command": "azuredevopspilot.changeStateActive",
-          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug",
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug",
           "group": "state@1"
         },
         {
           "command": "azuredevopspilot.changeStateResolved",
-          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug",
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug",
           "group": "state@2"
         },
         {
           "command": "azuredevopspilot.changeStateClosed",
-          "when": "view == azureDevopsView && viewItem == userstory || viewItem == bug",
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug",
           "group": "state@3"
         }
       ]
-    }
+    },
+    "viewsWelcome": [
+      {
+        "view": "azureDevOpsSprintView",
+        "contents": "Welcome to Azure DevOps Pilot. Initial Configuration Required. Create a new Azure DevOps Persomal Access Token (PAT)\n[Configure Azure DevOps PAT](command:azuredevopspilot.setDevOpsPAT)\n[Configure Azure DevOps Organization](command:azuredevopspilot.openSettings)\n[Reload This Window](command:workbench.action.reloadWindow)"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

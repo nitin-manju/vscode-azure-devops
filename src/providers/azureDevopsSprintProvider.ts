@@ -2,14 +2,14 @@
 import { WorkItem } from "azure-devops-node-api/interfaces/WorkItemTrackingInterfaces";
 import path = require("path");
 import * as vscode from 'vscode';
-import { AzureDevOpsService } from "./azureDevopsService";
+import { AzureDevOpsWiService } from "./azureDevOpsWiService";
 import { TreeNode } from "./treeNode";
 
-export class AzureDevOpsProvider implements vscode.TreeDataProvider<TreeNode> {
+export class AzureDevOpsSprintProvider implements vscode.TreeDataProvider<TreeNode> {
   private _onDidChangeTreeData: vscode.EventEmitter<TreeNode | undefined | null | void> = new vscode.EventEmitter<TreeNode | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<TreeNode | undefined | null | void> = this._onDidChangeTreeData.event;
 
-  constructor(private readonly azureDevopsService: AzureDevOpsService) { }
+  constructor(private readonly azureDevopsService: AzureDevOpsWiService) { }
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
@@ -50,24 +50,28 @@ export class AzureDevOpsProvider implements vscode.TreeDataProvider<TreeNode> {
   }
 
   async getChildren(element?: TreeNode): Promise<TreeNode[]> {
-    let dependencies: TreeNode[] = [];
+    const nodes: TreeNode[] = [];
+
+    if (!this.azureDevopsService.isServiceConfigured()) {
+      return [];
+    }
 
     if (!element) {
-      let teams = await this.azureDevopsService.getAllTeams();
+      nodes.push(new TreeNode("Current Sprint", "sprint", null, "User Stories assigned in current sprint", vscode.TreeItemCollapsibleState.Collapsed));
+    }
+    else if (element.contextValue === 'sprint') {
+      const teams = await this.azureDevopsService.getAllTeams();
 
       for (let i = 0; i < teams.length; i++) {
-        let team = teams[i];
-        let label = `${team.projectName}\\${team.name}`;
+        const team = teams[i];
+        const label = `${team.projectName}\\${team.name}`;
 
-        dependencies.push(new TreeNode(label, "team", team, label, vscode.TreeItemCollapsibleState.Collapsed));
+        nodes.push(new TreeNode(label, "team", team, label, vscode.TreeItemCollapsibleState.Collapsed));
       }
     }
     else if (element.contextValue === 'team') {
-      dependencies.push(new TreeNode("Current Sprint", "sprint", element.data, "User Stories assigned in current sprint", vscode.TreeItemCollapsibleState.Collapsed));
-    }
-    else if (element.contextValue === 'sprint') {
+      const wis = await this.azureDevopsService.getAllUserStoriesForTeam(element.data);
 
-      let wis = await this.azureDevopsService.getAllUserStoriesForTeam(element.data);
       if (wis) {
         for (let i = 0; i < wis.length; i++) {
           const curr: WorkItem = wis[i];
@@ -91,15 +95,15 @@ export class AzureDevOpsProvider implements vscode.TreeDataProvider<TreeNode> {
               arguments: [curr]
             }; */
 
-            dependencies.push(node);
+            nodes.push(node);
           }
         }
       }
       else {
-        dependencies.push(new TreeNode("No work items found.", "notfound", null, "No work items were found in the current sprint.", vscode.TreeItemCollapsibleState.None));
+        nodes.push(new TreeNode("No work items found.", "notfound", null, "No work items were found in the current sprint.", vscode.TreeItemCollapsibleState.None));
       }
     }
 
-    return Promise.resolve(dependencies);
+    return Promise.resolve(nodes);
   }
 }
