@@ -88,14 +88,7 @@ export class AzureDevOpsSprintProvider implements vscode.TreeDataProvider<TreeNo
             tooltip += `\nPRIORITY: ${curr.fields['Microsoft.VSTS.Common.Priority']}`;
             tooltip += `\nSTORY POINTS: ${curr.fields['Microsoft.VSTS.Scheduling.StoryPoints']}`;
 
-            let node = new TreeNode(label, type, curr, tooltip, vscode.TreeItemCollapsibleState.None);
-            /*  node.command = {
-              title: "Open Details",
-              command: "azuredevopspilot.openWiDetails",
-              arguments: [curr]
-            }; */
-
-            nodes.push(node);
+            nodes.push(new TreeNode(label, type, curr, tooltip, vscode.TreeItemCollapsibleState.None));
           }
         }
       }

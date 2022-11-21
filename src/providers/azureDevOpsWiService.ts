@@ -81,11 +81,4 @@ export class AzureDevOpsWiService {
             await wi.updateWorkItem(null, docs, workItem.id, workItem.fields["System.TeamProject"]);
         }
     }
-
-    public async getAllPipelines() {
-        const wi = await this.connection.getCoreApi();
-
-        wi.getProjects()
-
-    }
 }

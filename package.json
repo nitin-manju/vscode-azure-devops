@@ -1,22 +1,22 @@
 {
   "name": "azuredevopspilot",
-  "displayName": "AzureDevOpsPilot",
+  "displayName": "Azure DevOps Pilot",
   "description": "A pilot for Azure DevOps",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.73.0"
   },
   "categories": [
+    "Azure",
     "Other"
   ],
   "activationEvents": [
-    "onView:azureDevOpsSprintView",
-    "onCommand:azuredevopspilot.helloWorld"
+    "onView:azureDevOpsSprintView"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Azure DevOps",
+      "title": "Azure DevOps Pilot",
       "properties": {
         "azureDevopsPilot.organizationName": {
           "type": "string",

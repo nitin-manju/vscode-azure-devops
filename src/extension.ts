@@ -4,15 +4,9 @@ import { AzureDevOpsWiService } from './providers/azureDevOpsWiService';
 import { WorkItemStatus } from './providers/workItemStatus';
 
 export async function activate(context: vscode.ExtensionContext) {
-
 	const settings = vscode.workspace.getConfiguration('azureDevopsPilot');
-
 	let orgName: string = settings.get('organizationName') as string;
 	let devOpsPAT = await context.secrets.get("azuredevopspilot.devOpsPAT") as string;
-
-	if (!orgName || !devOpsPAT) {
-		//vscode.commands.executeCommand('setContext', 'azuredevopspilot.isConfigured', true);
-	}
 
 	context.subscriptions.push(vscode.commands.registerCommand('azuredevopspilot.openSettings', () => {
 		vscode.commands.executeCommand('workbench.action.openSettings', 'azureDevopsPilot');
