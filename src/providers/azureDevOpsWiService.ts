@@ -5,6 +5,7 @@ import { Operation } from "azure-devops-node-api/interfaces/common/VSSInterfaces
 import { WebApiTeam } from "azure-devops-node-api/interfaces/CoreInterfaces";
 import { Wiql, WorkItem } from "azure-devops-node-api/interfaces/WorkItemTrackingInterfaces";
 import * as wi from "azure-devops-node-api/WorkItemTrackingApi";
+import { WiqlPathConstant } from "./wiqlPathConstants";
 import { WorkItemStatus } from "./workItemStatus";
 
 export class AzureDevOpsWiService {
@@ -53,6 +54,27 @@ export class AzureDevOpsWiService {
         return [];
     }
 
+    public async getAllAttachedTasks(workitem: WorkItem): Promise<WorkItem[]> {
+        const wi: wi.WorkItemTrackingApi = await this.connection.getWorkItemTrackingApi();
+        const query: Wiql = {
+            query: `SELECT [System.Id], [System.Title], [System.State] 
+                    FROM WorkItems 
+                    WHERE [System.AssignedTo] = @Me 
+                    AND [System.Parent] = '${workitem.id}'
+                    ORDER BY [System.State] ASC, [Microsoft.VSTS.Common.Priority] ASC, [System.CreatedDate] DESC`
+        };
+
+        const res = await wi.queryByWiql(query);
+
+        if (res && res.workItems) {
+            const ids: number[] = [];
+            res.workItems.forEach((item: WorkItem) => { if (item.id) { ids.push(item.id.valueOf()) } });
+            return await wi.getWorkItems(ids);
+        }
+
+        return [];
+    }
+
     public async setWorkItemStatus(workItem: WorkItem, status: WorkItemStatus) {
         const wi: wi.WorkItemTrackingApi = await this.connection.getWorkItemTrackingApi();
 
@@ -74,11 +96,11 @@ export class AzureDevOpsWiService {
 
             const docs = [{
                 op: Operation.Replace,
-                path: "/fields/System.State",
+                path: WiqlPathConstant.statePath,
                 value: value
             }];
 
-            await wi.updateWorkItem(null, docs, workItem.id, workItem.fields["System.TeamProject"]);
+            await wi.updateWorkItem(null, docs, workItem.id, workItem.fields[WiqlPathConstant.teamProject]);
         }
     }
 }

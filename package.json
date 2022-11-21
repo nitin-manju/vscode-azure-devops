@@ -81,21 +81,21 @@
       "view/item/context": [
         {
           "command": "azuredevopspilot.openItem",
-          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug"
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug || viewItem == task"
         },
         {
           "command": "azuredevopspilot.changeStateActive",
-          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug",
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug || viewItem == task",
           "group": "state@1"
         },
         {
           "command": "azuredevopspilot.changeStateResolved",
-          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug",
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug || viewItem == task",
           "group": "state@2"
         },
         {
           "command": "azuredevopspilot.changeStateClosed",
-          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug",
+          "when": "view == azureDevOpsSprintView && viewItem == userstory || viewItem == bug || viewItem == task",
           "group": "state@3"
         }
       ]
